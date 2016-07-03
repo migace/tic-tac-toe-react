@@ -1,6 +1,4 @@
 var webpack = require('webpack'),
-    webpackDevMiddleware = require('webpack-dev-middleware'),
-    webpackHotMiddleware = require('webpack-hot-middleware'),
     config = require('../webpack.config'),
     path = require("path"),
     express = require('express'),
@@ -9,8 +7,13 @@ var webpack = require('webpack'),
     compiler = webpack(config),
     constants = require('../constants.js');
 
-app.use(webpackDevMiddleware(compiler, { noInfo: true, publicPath: config.output.publicPath }))
-app.use(webpackHotMiddleware(compiler))
+app.use(require('webpack-dev-middleware')(compiler, {
+    noInfo: true,
+    publicPath: config.output.publicPath
+}));
+
+app.use(require('webpack-hot-middleware')(compiler));
+
 app.use(express.static(__dirname + '/../' + constants.PUBLIC_ASSETS_PATH));
 
 app.get("/", function(req, res) {
