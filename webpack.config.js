@@ -1,31 +1,30 @@
-var path = require('path');
-var webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
 
 module.exports = {
-  // or devtool: 'eval' to debug issues with compiled output:
-  devtool: 'cheap-module-eval-source-map',
-  entry: [
-    // necessary for hot reloading with IE:
-    'eventsource-polyfill',
-    // listen to code updates emitted by hot middleware:
-    'webpack-hot-middleware/client',
-    // your code:
-    './client/index'
-  ],
+  entry: './src/index.js',
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    compress: true,
+    port: 9000
+  },
   output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'bundle.js',
-    publicPath: '/client/dist/'
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
+  },
+  module: {
+    rules: [
+      { test: /\.js$/, use: 'babel-loader' },
+      {
+        test: /\.scss$/,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.js'],
   },
   plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
-  ],
-  module: {
-    loaders: [{
-      test: /\.js$/,
-      loaders: ['babel'],
-      include: path.join(__dirname, 'client')
-    }]
-  }
+    new HtmlWebpackPlugin({template: './src/index.html'})
+  ]
 };
